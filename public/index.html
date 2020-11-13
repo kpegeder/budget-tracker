@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#317EFB" />
     <link
       rel="shortcut icon"
-      href="icons/icon-192x192.png"
+      href="assets/images/icons/icon-192x192.png"
       type="image/x-icon"
     />
     <link
@@ -53,5 +53,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="./assets/js/index.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("service-worker.js").then((reg) => {
+            console.log("We found your service worker file!", reg);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
