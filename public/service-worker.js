@@ -16,10 +16,8 @@ const DATA_CACHE_NAME = "data-cache-v1";
 
 // Install
 self.addEventListener("install", function (evt) {
-  // console.log(evt);
   evt.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log(cache);
       console.log("Your files were pre-caches successfully!");
       return cache.addAll(FILES_TO_CACHE);
     })
@@ -52,17 +50,17 @@ self.addEventListener("fetch", function (evt) {
   // console.log(evt.request);
   const { method } = evt.request;
   const { url } = evt.request;
-  if (url.includes("/api/") && method != "POST") {
+  if (url.includes("/api/") && method === "GET") {
+    console.log(evt);
     evt.respondWith(
       caches
         .open(DATA_CACHE_NAME)
         .then((cache) => {
           return fetch(evt.request)
             .then((response) => {
-              // console.log(response);
               // If the response was good, clone it and store it in the cache
               if (response.status === 200) {
-                cache.put(evt.request.url, response.clone());
+                cache.put(evt.request, response.clone());
               }
 
               return response;
@@ -79,6 +77,7 @@ self.addEventListener("fetch", function (evt) {
     evt.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(evt.request).then((response) => {
+          console.log(response);
           return response || fetch(evt.request);
         });
       })
