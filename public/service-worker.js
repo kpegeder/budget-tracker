@@ -50,15 +50,16 @@ self.addEventListener("activate", function (evt) {
 // Fetch
 self.addEventListener("fetch", function (evt) {
   // console.log(evt.request);
+  const { method } = evt.request;
   const { url } = evt.request;
-  if (url.includes("/api/")) {
+  if (url.includes("/api/") && method != "POST") {
     evt.respondWith(
       caches
         .open(DATA_CACHE_NAME)
         .then((cache) => {
           return fetch(evt.request)
             .then((response) => {
-              console.log(response);
+              // console.log(response);
               // If the response was good, clone it and store it in the cache
               if (response.status === 200) {
                 cache.put(evt.request.url, response.clone());
