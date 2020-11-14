@@ -6,14 +6,14 @@ const request = indexedDB.open("budget", 1);
 // Creating or updating the version of the database
 request.onupgradeneeded = function (event) {
   // Create object store called "pending" and set autoIncrement to true
-  console.log(event);
   const db = event.target.result;
+
   db.createObjectStore("pending", { autoIncrement: true });
 };
 
 // If the onupgradeneeded event exits successfully, the database will open
 request.onsuccess = function (event) {
-  console.log(event);
+  db = event.target.result;
 
   // Check if the app is online before reading from db
   if (navigator.onLine) {
@@ -50,14 +50,13 @@ function checkDatabase() {
   const getAll = store.getAll();
 
   getAll.onsuccess = function () {
-    console.log(getAll);
     if (getAll.result.length > 0) {
       fetch("/api/transaction/bulk", {
         method: "POST",
         body: JSON.stringify(getAll.result),
         headers: {
           Accept: "application/json, text/plain, */*",
-          "Contect-type": "application/json",
+          "Content-Type": "application/json",
         },
       })
         .then((response) => response.json())
