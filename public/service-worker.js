@@ -49,7 +49,13 @@ self.addEventListener("activate", function (evt) {
 self.addEventListener("fetch", function (evt) {
   const { method } = evt.request;
   const { url } = evt.request;
-  if (url.includes("/api/") && method === "GET") {
+
+  if (method !== "GET" || !evt.request.url.startsWith(self.location.origin)) {
+    evt.respondWith(fetch(evt.request));
+    return;
+  }
+
+  if (url.includes("/api/")) {
     evt.respondWith(
       caches
         .open(DATA_CACHE_NAME)
@@ -60,7 +66,6 @@ self.addEventListener("fetch", function (evt) {
               if (response.status === 200) {
                 cache.put(evt.request, response.clone());
               }
-
               return response;
             })
             .catch((err) => {
